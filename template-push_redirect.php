@@ -1,6 +1,6 @@
 <?php
 /**
- * Template Name: Push Redirect12
+ * Template Name: Push Redirect
  * 
  *
 */
@@ -14,10 +14,6 @@ if(isset($_GET['utm_medium']) && isset($_GET['utm_source']) && isset($_GET['utm_
       $manualpaid = $manualpaidvalue;
 }
 
-// echo 'check'; 
-// // echo  $_COOKIE[$manualpaid];
-// echo  $manualpaid;
-// die();
 $cookiename = "lp_visited";
 /* Set time interval of 24 hours */
 $time = time() + (60 * 60 * 24);
@@ -1080,7 +1076,7 @@ if(isset($_GET["gclid"])){
                     hsa_ver = $('#hsa_ver').val();
                     hubspotutk = $('#hubspotutk').val();              
                     manualpaid = $('#manualpaid').val(); 
-              var adv_sign_url = "https://platform.yeesshh.com/advertiser_signup_beta_2021_01_14.php?gclid="+gclid+"&utm_term="+utm_term+"&utm_source="+utm_source+"&utm_medium="+utm_medium+"&utm_campaign="+utm_campaign+"&hsa_cam="+hsa_cam+"&hsa_grp="+hsa_grp+"&hsa_mt="+hsa_mt+"&hsa_src="+hsa_src+"&hsa_ad="+hsa_ad+"&hsa_acc="+hsa_acc+"&hsa_net="+hsa_net+"&hsa_kw="+hsa_kw+"&hsa_tgt="+hsa_tgt+"&hsa_ver="+hsa_ver+"&manualpaid="+manualpaid+"&hubspotutk="+hubspotutk+"";
+              var adv_sign_url = "https://platform.yeesshh.com/advertiser_signup.php?gclid="+gclid+"&utm_term="+utm_term+"&utm_source="+utm_source+"&utm_medium="+utm_medium+"&utm_campaign="+utm_campaign+"&hsa_cam="+hsa_cam+"&hsa_grp="+hsa_grp+"&hsa_mt="+hsa_mt+"&hsa_src="+hsa_src+"&hsa_ad="+hsa_ad+"&hsa_acc="+hsa_acc+"&hsa_net="+hsa_net+"&hsa_kw="+hsa_kw+"&hsa_tgt="+hsa_tgt+"&hsa_ver="+hsa_ver+"&manualpaid="+manualpaid+"&hubspotutk="+hubspotutk+"";
 
 var tracking_url = "https://<?php echo $_SERVER['HTTP_HOST']; ?>/signup/submitted/?gclid="+gclid+"&utm_term="+utm_term+"&utm_source="+utm_source+"&utm_medium="+utm_medium+"&utm_campaign="+utm_campaign+"&hsa_cam="+hsa_cam+"&hsa_grp="+hsa_grp+"&hsa_mt="+hsa_mt+"&hsa_src="+hsa_src+"&hsa_ad="+hsa_ad+"&hsa_acc="+hsa_acc+"&hsa_net="+hsa_net+"&hsa_kw="+hsa_kw+"&hsa_tgt="+hsa_tgt+"&hsa_ver="+hsa_ver+"&hubspotutk="+hubspotutk+"";
 
@@ -1235,7 +1231,7 @@ var tracking_url = "https://<?php echo $_SERVER['HTTP_HOST']; ?>/signup/submitte
 
                      $.ajax({
                        type: "POST",
-                       url: 'https://api.mydsp.yeesshh.com/user/create_beta',
+                       url: 'https://api.mydsp.yeesshh.com/user/create',
                        data:myString,
                        crossDomain: true,
                        async: true,
