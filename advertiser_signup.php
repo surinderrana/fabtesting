@@ -29,6 +29,7 @@ function safe_string($value){
     return str_replace($search, $replace, $value);
 }
 
+
 $mes = '';
 $username=htmlspecialchars($_REQUEST['reg_username'],ENT_QUOTES);
 $email=htmlspecialchars($_REQUEST['reg_email'],ENT_QUOTES);
@@ -101,7 +102,7 @@ if(preg_match('/107.167.105/i',$ip)) {  $error='1'; $mes = '<div class="alert al
 			// setcookie("PuTlogged",$user,$rtime,"/");
 			// $reg_date = time(); 
 
-		$token = '';
+
 
 			// $data['name'] = $username;
 			// $data['email'] = $email;
@@ -174,84 +175,45 @@ if(preg_match('/107.167.105/i',$ip)) {  $error='1'; $mes = '<div class="alert al
 			if($hubspotutk){
 				$hubspotutk = "&hubspotutk=".$hubspotutk;
 			}						
-			
+
+
 			$AuthToken = bin2hex(openssl_random_pseudo_bytes(64));
-			$token_url = '<a href= "https://platform.yeesshh.com/account_confirm.php?token='.$AuthToken.$gclid.$utm_term.$utm_source.$utm_medium.$utm_campaign.$hsa_cam.$hsa_grp.$hsa_mt.$hsa_src.$hsa_ad.$hsa_acc.$hsa_net.$hsa_kw.$hsa_tgt.$hsa_ver.$hubspotutk.'">Confirm Account</a>';
 
 			mysql_query("INSERT INTO `users` (`username`,`password`,`email`,`ref`,`ip`,`reg_date`,`status`) VALUES('$username','$password','$email','$ref','$ip','$reg_date','Unverified')");
 			$userID = mysql_insert_id();
 
 			mysql_query("INSERT INTO `users_profile` (`username`,`country`,`im_type`,`im_id`) VALUES('$username','$country' ,'$im_type', '$im_id')");
 			// mysql_query("INSERT INTO `users_profile_copy` (`username`,`country`,`im_type`,`im_id`) VALUES('$username','$country' ,'$im_type', '$im_id')");
-			$emailQueueData=array();
-			$email_content = getEmailContent('advertiser_confirmation');
 
-
-			// $text = '
-			// Hey <b>'.$username.'</b>:<br>
-			// Thank you for registering with Yeesshh.<br>
-			// To confirm your signup, please click the link below: URL.<br>
-			// Link <a href= "https://platform.yeesshh.com/account_confirm.php?token='.$AuthToken.$gclid.$utm_term.$utm_source.$utm_medium.$utm_campaign.$hsa_cam.$hsa_grp.$hsa_mt.$hsa_src.$hsa_ad.$hsa_acc.$hsa_net.$hsa_kw.$hsa_tgt.$hsa_ver.$hubspotutk.'">Confirm Account</a><br>
-			// <br>
-			// <br>
-			// ----------------------<br>
-			// For security reasons, we advise you to delete this email after successfully confirming your account.
-			// ';
-			// $headers  = 'MIME-Version: 1.0' . "\r\n";
-			// $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-			// $headers .= 'From: platform.yeesshh.com<noreply@yeesshh.com>' . "\r\n" .
-			// 		    'Reply-To: noreply@yeesshh.com' . "\r\n" .
-			// 		    'Bcc: dennis@yeesshh.com' . "\r\n" .
-			// 		    'Bcc: fabricio@yeesshh.com' . "\r\n" .
-			// 		    'Bcc: swt.test2018@gmail.com' . "\r\n" .
-			// 		    'X-Mailer: PHP/' . phpversion();
-			// mail($email,'Advertiser Registration',$text,$headers);
-
-			if($email_content){
-
-				$e_subject = $email_content["e_subject"] ? $email_content["e_subject"] : '';
-			    $e_content = $email_content["e_content"];
-			    $e_from = $email_content["e_from"] ? $email_content["e_from"] : '';
-			    $e_from_name = $email_content["e_from_name"];
-			    $e_bcc = $email_content["e_bcc"];
-			    $e_from_name = $email_content["e_from_name"] ? $email_content["e_from_name"] : '';
-			    $e_reply_to = $email_content["e_reply_to"] ? $email_content["e_reply_to"] : '';
-
-		        $e_content = str_replace('{USERNAME}',$username,$e_content);
-		        $e_content = str_replace('{TOKEN_URL}',$token_url,$e_content);
-
-
-				$emailQueueData['eq_username'] = $username;
-				$emailQueueData['eq_slug'] = 'advertiser_confirmation';
-				$emailQueueData['eq_subject'] = $e_subject;
-				$emailQueueData['eq_content'] = $e_content;
-				$emailQueueData['eq_to_email'] = $email;
-				$emailQueueData['eq_from_email'] = $e_from;
-				$emailQueueData['eq_from_name'] = $e_from_name;
-				$emailQueueData['eq_bcc_email'] = $e_bcc;
-				$emailQueueData['eq_reply_to_email'] = $e_reply_to;
-
-				addDataToEailQueue($emailQueueData);
-			
-			}
-
+			$text = '
+			Hey <b>'.$username.'</b>:<br>
+			Thank you for registering with Yeesshh.<br>
+			To confirm your signup, please click the link below: URL.<br>
+			Link <a href= "https://platform.yeesshh.com/account_confirm.php?token='.$AuthToken.$gclid.$utm_term.$utm_source.$utm_medium.$utm_campaign.$hsa_cam.$hsa_grp.$hsa_mt.$hsa_src.$hsa_ad.$hsa_acc.$hsa_net.$hsa_kw.$hsa_tgt.$hsa_ver.$hubspotutk.'">Confirm Account</a><br>
+			<br>
+			<br>
+			----------------------<br>
+			For security reasons, we advise you to delete this email after successfully confirming your account.
+			';
+			$headers  = 'MIME-Version: 1.0' . "\r\n";
+			$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+			$headers .= 'From: platform.yeesshh.com<noreply@yeesshh.com>' . "\r\n" .
+					    'Reply-To: noreply@yeesshh.com' . "\r\n" .
+					    'Bcc: dennis@yeesshh.com' . "\r\n" .
+					    'Bcc: fabricio@yeesshh.com' . "\r\n" .
+					    'Bcc: swt.test2018@gmail.com' . "\r\n" .
+					    'X-Mailer: PHP/' . phpversion();
+			mail($email,'Advertiser Registration',$text,$headers);
+			// mail("swt.test2018@gmail.com",'Advertiser Registration',$text,$headers);
 
 			mysql_query("INSERT INTO `user_verify` (`user_id`,`token`) VALUES('$userID','$AuthToken')");
 
 
-			mysql_query("INSERT INTO `notifications` (`username`,`title`,`description`,`type`,`date`,`status`) VALUES('$username','Registration','You have successfully registered your account with myDSP','success','$reg_date','1')");
+			mysql_query("INSERT INTO `notifications` (`username`,`title`,`description`,`type`,`date`,`status`) VALUES('$username','Registration','You have successfully registered your account with PopUnder<b>TOTAL</b>','success','$reg_date','1')");
 			
 			$hubspotutk=safe_string($_REQUEST['hubspotutk']) ? : '';
 
 			setcookie("hubspotutk",$hubspotutk,time()+2592000,"/",".yeesshh.com");
-
-
-			$fp =  fopen(__DIR__.'/logs/hubspot_strange_bug.log', 'a');
-            fwrite($fp, PHP_EOL ."______________________".date('Y-m-d h:i:s')."_____________________________".PHP_EOL );
-            fwrite($fp, "FUNCTION NAME : BEFORE CREATE HUBSPOT ACCOUNT".PHP_EOL);
-            fwrite($fp, "userID :".print_r($userID,true).PHP_EOL );
-            fclose($fp);
-
 
 			/***********/
 			if(!empty($userID)){
@@ -259,44 +221,15 @@ if(preg_match('/107.167.105/i',$ip)) {  $error='1'; $mes = '<div class="alert al
 				$checkCreateUpdateHubspotAccount = checkCreateUpdateHubspotAccountSignup($userID);
 			    $c_u_json = json_encode($checkCreateUpdateHubspotAccount);
 
-			    $fp =  fopen(__DIR__.'/logs/hubspot_strange_bug.log', 'a');
-	            fwrite($fp, PHP_EOL ."______________________".date('Y-m-d h:i:s')."_____________________________".PHP_EOL );
-	            fwrite($fp, "FUNCTION NAME : AFTER checkCreateUpdateHubspotAccountSignup ".PHP_EOL);
-	            fwrite($fp, "DATA RETURN :".print_r($checkCreateUpdateHubspotAccount,true).PHP_EOL );
-	            fclose($fp);
-
 			    if(isset($checkCreateUpdateHubspotAccount[vid]) && !empty($checkCreateUpdateHubspotAccount[vid])){
 			        $checkCreateUpdateHubspotAccount[vid];
 			    }else{
 			      	$checkCreateUpdateHubspotAccount[vid] = 0;
-			    }	    
+			    }	        
 
-			    // if($hubspotutk){
+			    createHubspotAccountutf($userID,$hubspotutk);				
 
-			    	$fp =  fopen(__DIR__.'/logs/hubspot_strange_bug.log', 'a');
-		            fwrite($fp, PHP_EOL ."______________________".date('Y-m-d h:i:s')."_____________________________".PHP_EOL );
-		            fwrite($fp, "FUNCTION NAME : BEFORE  hubspotutk ".PHP_EOL);
-		            fwrite($fp, "USERID  :".print_r($userID,true).PHP_EOL );
-		            fwrite($fp, "hubspotutk :".print_r($hubspotutk,true).PHP_EOL );
-		            fclose($fp);	
-
-			    	$output = createHubspotAccountutf($userID,$hubspotutk);	
-
-			    	$fp =  fopen(__DIR__.'/logs/hubspot_strange_bug.log', 'a');
-		            fwrite($fp, PHP_EOL ."______________________".date('Y-m-d h:i:s')."_____________________________".PHP_EOL );
-		            fwrite($fp, "FUNCTION NAME : AFTER  hubspotutk ".PHP_EOL);
-		            fwrite($fp, "USERID  :".print_r($userID,true).PHP_EOL );
-		            fwrite($fp, "output :".print_r($output,true).PHP_EOL );
-		            fclose($fp);			
-			    // }
 			}
-
-			$fp =  fopen(__DIR__.'/logs/hubspot_strange_bug.log', 'a');
-            fwrite($fp, PHP_EOL ."______________________".date('Y-m-d h:i:s')."_____________________________".PHP_EOL );
-            fwrite($fp, "FUNCTION NAME : AFTER FULL REGISTERATION ".PHP_EOL);
-          	fwrite($fp, PHP_EOL ."______________________ !! _____________________________".PHP_EOL );
-          	fwrite($fp, PHP_EOL ."______________________ !! _____________________________".PHP_EOL );
-            fclose($fp);	
 
 			/**********/
 			
@@ -757,9 +690,10 @@ li{
  </div>
 </div>
 
+
 <div class="registermain" style="<?php if($success == 1){ echo 'display: none;'; }?>">	
 
-<div class="container new" id="contentcontainer">
+<div class="container" id="contentcontainer">
 
 <div class="row registerform" >
  

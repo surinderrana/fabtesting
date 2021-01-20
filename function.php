@@ -34,7 +34,7 @@
     function checkCreateUpdateHubspotAccountSignup($id){
 
         $user = GetUserDataByIdHub($id);
-
+      
         $url  = "https://api.hubapi.com/contacts/v1/search/query?q=".$user["email"]."&hapikey=add59d28-aa68-4430-93de-1424fdac34af";
         $output =  httpGet($url);
 
@@ -50,12 +50,22 @@
 
     // CREATE HUBSPOT ACCOUNT
     function createHubspotAccountSignup($user){
-        // $hubspotutk = htmlspecialchars(@$_REQUEST['hubspotutk'],ENT_QUOTES);
+        $hubspotutk = htmlspecialchars(@$_REQUEST['hubspotutk'],ENT_QUOTES);
         // $hutk = array('hutk' => $hubspotutk );
-
+        $manualpaid = @$_COOKIE['manualpaid'];
+                         
         $userCountry = getCountry($user["country"]);
 
         $platformsData = GetUserPlatformDataByIdHub($user["id"]);
+        
+        if((isset($manualpaid)) || (isset($hubspotutk))){
+            $manual_original_source_val = "Paid Search";
+            $manual_original_source_drilldown_val = $manualpaid;
+        }else{
+             $manual_original_source_val = "Offline sources";
+             $manual_original_source_drilldown_val = "API";
+        }
+
         $data = array(
                 'properties' => array(
                     array(
@@ -97,6 +107,14 @@
                     array(
                             'property' => 'product_bought',
                             'value' => ''
+                        ),
+                    array(
+                            'property' => 'manual_original_source',
+                            'value' => @$manual_original_source_val
+                        ),
+                    array(
+                            'property' => 'manual_original_source_drilldown',
+                            'value' => @$manual_original_source_drilldown_val
                         )
                 )
             );
@@ -115,7 +133,6 @@
     function updateHubspotAccountDelete($output, $user){
 
         $platformsData = GetUserPlatformDataByIdHub($user["id"]);
-
 
         $userCountry = getCountry($user["country"]);
 
@@ -160,7 +177,7 @@
                     array(
                             'property' => 'product_bought',
                             'value' => ''
-                        )
+                        ),
                 )
             );
 
@@ -179,8 +196,20 @@
 
         // CREATE HUBSPOT ACCOUNT
     function updateHubspotAccountSignup($output, $user){
-
+        
+        $hubspotutk = htmlspecialchars(@$_REQUEST['hubspotutk'],ENT_QUOTES);
+        // $hutk = array('hutk' => $hubspotutk );
+        $manualpaid = @$_COOKIE['manualpaid'];
+         
         $platformsData = GetUserPlatformDataByIdHub($user["id"]);
+
+        if((isset($manualpaid)) || (isset($hubspotutk))){
+            $manual_original_source_val = "Paid Search";
+            $manual_original_source_drilldown_val = $manualpaid;
+        }else{
+             $manual_original_source_val = "Offline sources";
+             $manual_original_source_drilldown_val = "API";
+        }
 
 
         $userCountry = getCountry($user["country"]);
@@ -226,6 +255,14 @@
                     array(
                             'property' => 'product_bought',
                             'value' => ''
+                        ),
+                     array(
+                            'property' => 'manual_original_source',
+                            'value' => @$manual_original_source_val
+                        ),
+                    array(
+                            'property' => 'manual_original_source_drilldown',
+                            'value' => @$manual_original_source_drilldown_val
                         )
                 )
             );
