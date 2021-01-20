@@ -52,8 +52,8 @@ function AuthenticateRequest($user_id,$token)
   // CURL FUNCTIONS STARTS HERE
   
   if(function_exists( "httpGet" ) === false){
-	  //echo "does not exist";
-	  function httpGet($url){        
+      //echo "does not exist";
+      function httpGet($url){        
         $ch = curl_init();  
         curl_setopt($ch,CURLOPT_URL,$url);
         curl_setopt($ch,CURLOPT_RETURNTRANSFER,true); 
@@ -95,50 +95,50 @@ function AuthenticateRequest($user_id,$token)
         }
     }*/
 
-	if(function_exists( "httpPost" ) === false){
-		function httpPost($url,$data){
+    if(function_exists( "httpPost" ) === false){
+        function httpPost($url,$data){
 
-			$post_json = json_encode($data);
+            $post_json = json_encode($data);
 
-			$ch = @curl_init();
-			@curl_setopt($ch, CURLOPT_POST, true);
-			@curl_setopt($ch, CURLOPT_POSTFIELDS, $post_json);
-			@curl_setopt($ch, CURLOPT_URL, $url);
-			@curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
-			@curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		   
-			$output = @curl_exec($ch);
-			$status_code = @curl_getinfo($ch, CURLINFO_HTTP_CODE);
-			$curl_errors = curl_error($ch);
+            $ch = @curl_init();
+            @curl_setopt($ch, CURLOPT_POST, true);
+            @curl_setopt($ch, CURLOPT_POSTFIELDS, $post_json);
+            @curl_setopt($ch, CURLOPT_URL, $url);
+            @curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+            @curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+           
+            $output = @curl_exec($ch);
+            $status_code = @curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            $curl_errors = curl_error($ch);
 
-			// echo "output  "; print_r($output);
-			// echo "status_code  "; print_r($status_code);
-			// echo "curl_errors  "; print_r($curl_errors);
+            // echo "output  "; print_r($output);
+            // echo "status_code  "; print_r($status_code);
+            // echo "curl_errors  "; print_r($curl_errors);
 
-			// exit;
-		   
-			@curl_close($ch);
+            // exit;
+           
+            @curl_close($ch);
 
-			if($status_code == 200 || $status_code == 204){
-				return json_decode($output);
-			}else{
-
-				$myfile = fopen("tmp/debug.log", "a");
-				fwrite($myfile, "---------------------------inside hubspot( ----------------------------------\n\r");
-				fwrite($myfile, print_r($output,true));
-				fwrite($myfile, print_r($status_code,true));
-				fwrite($myfile, print_r($curl_errors,true));
-				fwrite($myfile, "\n\r");
-				fwrite($myfile, "#######################################################RECORD ENDS HERE #######################################################\n\r");
-				fclose($myfile);
-				// echo "output  "; print_r($output);
-				// echo "status_code  "; print_r($status_code);
-				// echo "curl_errors  "; print_r($curl_errors);
+            if($status_code == 200 || $status_code == 204){
                 return json_decode($output);
-			}
+            }else{
 
-		}
-	}
+                $myfile = fopen("tmp/debug.log", "a");
+                fwrite($myfile, "---------------------------inside hubspot( ----------------------------------\n\r");
+                fwrite($myfile, print_r($output,true));
+                fwrite($myfile, print_r($status_code,true));
+                fwrite($myfile, print_r($curl_errors,true));
+                fwrite($myfile, "\n\r");
+                fwrite($myfile, "#######################################################RECORD ENDS HERE #######################################################\n\r");
+                fclose($myfile);
+                // echo "output  "; print_r($output);
+                // echo "status_code  "; print_r($status_code);
+                // echo "curl_errors  "; print_r($curl_errors);
+                return json_decode($output);
+            }
+
+        }
+    }
 
 
      function createHubspotAccountutf($id, $hubspotutk){
@@ -149,6 +149,7 @@ function AuthenticateRequest($user_id,$token)
         }elseif(isset($_COOKIE['hubspotutk']) && $_COOKIE['hubspotutk'] != ""){
             $hubspotutk = htmlspecialchars(@$_COOKIE['hubspotutk'],ENT_QUOTES);
         }
+
         
         $comments =  new stdClass;
         $comments->name = 'email';
@@ -302,28 +303,48 @@ function jt_assign_value( $value ) {
     }
 
 
-  function checkCreateUpdateHubspotAccountSignup($id){
+  function checkCreateUpdateHubspotAccountSignup($id,$manualpaid,$hubspotutk){
 
+
+        $myfile = fopen("../../logs/hubspot_strange_bug.log", "a");
+        fwrite($myfile, "---------------------------inside checkCreateUpdateHubspotAccountSignup( ----------------------------------\n\r");
+        fwrite($myfile, print_r($id,true));
+        fwrite($myfile, print_r($manualpaid,true));
+        fwrite($myfile, print_r($hubspotutk,true));
+        fclose($myfile);
+
+        
         $user = GetUserDataByIdHub($id);
+     /*   if(isset($_REQUEST['hubspotutk']) && $_REQUEST['hubspotutk'] != ""){
+            $hubspotutk = htmlspecialchars(@$_REQUEST['hubspotutk'],ENT_QUOTES);
+        }elseif(isset($_COOKIE['hubspotutk']) && $_COOKIE['hubspotutk'] != ""){
+            $hubspotutk = htmlspecialchars(@$_COOKIE['hubspotutk'],ENT_QUOTES);
+        }*/
 
         $url  = "https://api.hubapi.com/contacts/v1/search/query?q=".$user["email"]."&hapikey=add59d28-aa68-4430-93de-1424fdac34af";
         $output =  httpGet($url);
 
         if(@$output->total){ 
-            $finalOutput = updateHubspotAccountSignup($output, $user);   
+            $finalOutput = updateHubspotAccountSignup($output,$user,$manualpaid,$hubspotutk);   
             return true; exit;
         }else{ 
-            $finalOutput = createHubspotAccountSignup($user);
+            $finalOutput = createHubspotAccountSignup($user,$manualpaid,$hubspotutk);
             return true; exit;
         }
     }
 
 
     // CREATE HUBSPOT ACCOUNT
-    function createHubspotAccountSignup($user){
-
+    function createHubspotAccountSignup($user,$manualpaid,$hubspotutk){
+                
         $userCountry = getCountry($user["country"]);
-
+        if((isset($manualpaid)) || (isset($hubspotutk))){
+            $manual_original_source_val = "Paid Search";
+            $manual_original_source_drilldown_val = $manualpaid;
+        }else{
+             $manual_original_source_val = "Offline sources";
+             $manual_original_source_drilldown_val = "API";
+        }
         $data = array(
                 'properties' => array(
                     array(
@@ -365,22 +386,36 @@ function jt_assign_value( $value ) {
                     array(
                             'property' => 'product_bought',
                             'value' => ''
+                        ),
+                    array(
+                            'property' => 'manual_original_source',
+                            'value' => @$manual_original_source_val
+                        ),
+                     array(
+                            'property' => 'manual_original_source_drilldown',
+                            'value' => @$manual_original_source_drilldown_val
                         )
                 )
             );
 
         $url = "https://api.hubapi.com/contacts/v1/contact?hapikey=add59d28-aa68-4430-93de-1424fdac34af";
-        httpPost($url,$data);
+        $finalwords = httpPost($url,$data);
         return true;       
     } 
 
 
         // CREATE HUBSPOT ACCOUNT
-    function updateHubspotAccountSignup($output, $user){
-
+    function updateHubspotAccountSignup($output,$user,$manualpaid,$hubspotutk){
 
         $userCountry = getCountry($user["country"]);
 
+        if((isset($manualpaid)) || (isset($hubspotutk))){
+            $manual_original_source_val = "Paid Search";
+            $manual_original_source_drilldown_val = $manualpaid;
+        }else{
+             $manual_original_source_val = "Offline sources";
+             $manual_original_source_drilldown_val = "API";
+        }
         $data = array(
                 'properties' => array(
                     array(
@@ -422,14 +457,25 @@ function jt_assign_value( $value ) {
                     array(
                             'property' => 'product_bought',
                             'value' => ''
+                        ),
+                    array(
+                            'property' => 'manual_original_source',
+                            'value' => @$manual_original_source_val
+                        ),
+                     array(
+                            'property' => 'manual_original_source_drilldown',
+                            'value' => @$manual_original_source_drilldown_val
                         )
                 )
             );
 
-
-        $vid = $output->contacts[0]->vid;
+         $vid = $output->contacts[0]->vid;
+       
+ 
         $url = "https://api.hubapi.com/contacts/v1/contact/vid/".$output->contacts[0]->vid."/profile?hapikey=add59d28-aa68-4430-93de-1424fdac34af";
-        httpPost($url,$data);
+        
+
+         httpPost($url,$data);
         return true;
     }
 
