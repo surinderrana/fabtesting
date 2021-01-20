@@ -110,13 +110,6 @@ function AuthenticateRequest($user_id,$token)
             $output = @curl_exec($ch);
             $status_code = @curl_getinfo($ch, CURLINFO_HTTP_CODE);
             $curl_errors = curl_error($ch);
-
-            // echo "output  "; print_r($output);
-            // echo "status_code  "; print_r($status_code);
-            // echo "curl_errors  "; print_r($curl_errors);
-
-            // exit;
-           
             @curl_close($ch);
 
             if($status_code == 200 || $status_code == 204){
@@ -131,9 +124,7 @@ function AuthenticateRequest($user_id,$token)
                 fwrite($myfile, "\n\r");
                 fwrite($myfile, "#######################################################RECORD ENDS HERE #######################################################\n\r");
                 fclose($myfile);
-                // echo "output  "; print_r($output);
-                // echo "status_code  "; print_r($status_code);
-                // echo "curl_errors  "; print_r($curl_errors);
+        
                 return json_decode($output);
             }
 
@@ -315,12 +306,6 @@ function jt_assign_value( $value ) {
 
         
         $user = GetUserDataByIdHub($id);
-     /*   if(isset($_REQUEST['hubspotutk']) && $_REQUEST['hubspotutk'] != ""){
-            $hubspotutk = htmlspecialchars(@$_REQUEST['hubspotutk'],ENT_QUOTES);
-        }elseif(isset($_COOKIE['hubspotutk']) && $_COOKIE['hubspotutk'] != ""){
-            $hubspotutk = htmlspecialchars(@$_COOKIE['hubspotutk'],ENT_QUOTES);
-        }*/
-
         $url  = "https://api.hubapi.com/contacts/v1/search/query?q=".$user["email"]."&hapikey=add59d28-aa68-4430-93de-1424fdac34af";
         $output =  httpGet($url);
 
